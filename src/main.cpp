@@ -33,10 +33,10 @@ void setup() {
   delay(2000); // sanity delay
 
   pinMode(BUTTON_PIN, INPUT);                                    // Set button input pin
-  digitalWrite(BUTTON_PIN, HIGH );  
+  digitalWrite(BUTTON_PIN, HIGH );
 
-  FastLED.addLeds<CHIPSET, DATA_PIN, CLOCK_PIN, COLOR_ORDER>(leds,NUM_LEDS);//.setCorrection( TypicalLEDStrip );  
-  FastLED.setBrightness(BRIGHTNESS);  
+  FastLED.addLeds<CHIPSET, DATA_PIN, CLOCK_PIN, COLOR_ORDER>(leds,NUM_LEDS);//.setCorrection( TypicalLEDStrip );
+  FastLED.setBrightness(BRIGHTNESS);
   FastLED.setMaxPowerInVoltsAndMilliamps(5, 500);                // FastLED Power management set at 5V, 500mA.
   set_max_power_indicator_LED(LED_BUILTIN);
 
@@ -51,12 +51,12 @@ void loop()
   effectsLibrary.MainLoop();
 
   FastLED.show(BRIGHTNESS);                                 //  Show and delay
-  
-  //delay(SPEED); 
+
+  //delay(SPEED);
   //Serial.println(LEDS.getFPS());                          // Display frames per second on the serial monitor.
 }
 
-void loop_bak() { 
+void loop_bak() {
 
   while (true)
   {
@@ -65,15 +65,15 @@ void loop_bak() {
     //stripeMix();
     //twinkleChange();
     //blur();
-    //rainbowWithGlitter();    
+    //rainbowWithGlitter();
 
     //DrawMarqueeScroll();
     //DrawTwinkle();
-    //DrawComet();    
+    //DrawComet();
     //DrawKITT();
     //DrawRainbowComet(6, NUM_LEDS, 32);
     //DrawMarqueeScroll();
-   
+
     //Fire(55,120,15);
 
     //Rainbow();
@@ -89,8 +89,8 @@ void loop_bak() {
     //SnowSparkle(0x80, 0x80, 0x80, 5, random(100,1000));
 
     //FastLED.clear(false);
-    //balls.Draw(); 
-    
+    //balls.Draw();
+
     /*
     // RGB Spinners
     float b = beat16(60) / 65535.0f * FAN_SIZE;
@@ -105,14 +105,14 @@ void loop_bak() {
     //SequentialRainbow();
     //VerticalRainbow();
     //HorizontalRainbow();
-    //PaletteRainbow();     
+    //PaletteRainbow();
 
     /*
     // Sequential Fire Fans
     static FireEffect fire(NUM_LEDS, 20, 100, 3, NUM_LEDS, true, false);
     fire.DrawFire();
     */
-    
+
     /*
     // Bottom Up Fire Effect with extra sparking on first fan only
     static FireEffect fire(NUM_LEDS, 20, 140, 3, NUM_LEDS, true, false);
@@ -124,7 +124,7 @@ void loop_bak() {
     EVERY_N_MILLISECONDS(250)
     {
       uint32_t milliwatts = calculate_unscaled_power_mW(g_LEDs, NUM_LEDS);
-  
+
       g_OLED.clearBuffer();
       g_OLED.setCursor(0, g_lineHeight);
       g_OLED.printf("FPS  : %u", FastLED.getFPS());
@@ -137,7 +137,7 @@ void loop_bak() {
     */
 
     FastLED.show(BRIGHTNESS);                          //  Show and delay
-    //delay(SPEED); 
+    //delay(SPEED);
     //Serial.println(LEDS.getFPS());                              // Display frames per second on the serial monitor.
   }
 }

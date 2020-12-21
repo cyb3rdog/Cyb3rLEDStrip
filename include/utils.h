@@ -6,7 +6,7 @@
 
 double FramesPerSecond(double seconds)
 {
-  static double framesPerSecond; 
+  static double framesPerSecond;
   framesPerSecond = (framesPerSecond * .9) + (1.0 / seconds * .1);
   return framesPerSecond;
 }
@@ -63,7 +63,7 @@ void DrawPixels(float fPos, float count, CRGB color)
 
 byte * Wheel(byte WheelPos) {
   static byte c[3];
- 
+
   if(WheelPos < 85) {
    c[0]=WheelPos * 3;
    c[1]=255 - WheelPos * 3;
@@ -86,19 +86,19 @@ byte * Wheel(byte WheelPos) {
 void setPixelHeatColor (int Pixel, byte temperature) {
   // Scale 'heat' down from 0-255 to 0-191
   byte t192 = round((temperature/255.0)*191);
- 
+
   // calculate ramp up from
   byte heatramp = t192 & 0x3F; // 0..63
   heatramp <<= 2; // scale up to 0..252
- 
+
   // figure out which third of the spectrum we're in:
   if( t192 > 0x80) {                     // hottest
-    FastLED.leds()[Pixel] = CRGB(255 / 256.0*BRIGHTNESS, 255 / 256.0*BRIGHTNESS, heatramp / 256.0*BRIGHTNESS);    
-  } else if( t192 > 0x40 ) {             // middle    
-    FastLED.leds()[Pixel] = CRGB(255 / 256.0*BRIGHTNESS, heatramp / 256.0*BRIGHTNESS, 0);    
+    FastLED.leds()[Pixel] = CRGB(255 / 256.0*BRIGHTNESS, 255 / 256.0*BRIGHTNESS, heatramp / 256.0*BRIGHTNESS);
+  } else if( t192 > 0x40 ) {             // middle
+    FastLED.leds()[Pixel] = CRGB(255 / 256.0*BRIGHTNESS, heatramp / 256.0*BRIGHTNESS, 0);
   } else {                               // coolest
-    FastLED.leds()[Pixel] = CRGB(heatramp / 256.0*BRIGHTNESS, 0, 0);      
-  } 
+    FastLED.leds()[Pixel] = CRGB(heatramp / 256.0*BRIGHTNESS, 0, 0);
+  }
 }
 
 

@@ -11,35 +11,32 @@ int        thisdir =   0;
 bool        huerot =   1;                                     // Does the hue rotate? 1 = yes
 uint8_t      bri = 16;
 
-CRGB buffer[NUM_LEDS];
-
 void matrixEffect() {
 
     if (huerot) palIndex++;
 
     //CRGB led = (thisdir == 0) ? FastLED.leds()[0] : FastLED.leds()[NUM_LEDS-1];
-    CRGB led = (thisdir == 0) ? buffer[0] : buffer[NUM_LEDS-1];    
+    CRGB led = (thisdir == 0) ? g_led_buffer[0] : g_led_buffer[NUM_LEDS-1];
 
-    if (random8(90) > 80) {    
+    if (random8(90) > 80) {
       bri = 256 / 3;
-      led = ColorFromPalette(g_currentPalette, palIndex, 255, g_currentBlending); 
-    } else {    
-      bri = bri - random(16); 
+      led = ColorFromPalette(g_currentPalette, palIndex, 255, g_currentBlending);
+    } else {
+      bri = bri - random(16);
       if (bri < 0 || bri > 256 / 3) bri = 0;
       //led = CHSV(96, SATURATION, bri);
-      led = ColorFromPalette(g_currentPalette, palIndex -16, bri, g_currentBlending); 
+      led = ColorFromPalette(g_currentPalette, palIndex -16, bri, g_currentBlending);
     }
 
     if (thisdir == 0) {
-      buffer[0] = led;
-      for (int i = NUM_LEDS-1; i >0 ; i-- ) buffer[i] = buffer[i-1];
+      g_led_buffer[0] = led;
+      for (int i = NUM_LEDS-1; i >0 ; i-- ) g_led_buffer[i] = g_led_buffer[i-1];
     } else {
-      buffer[NUM_LEDS - 1] = led;
-      for (int i = 0; i < NUM_LEDS-1 ; i++ ) buffer[i] = buffer[i+1];
+      g_led_buffer[NUM_LEDS - 1] = led;
+      for (int i = 0; i < NUM_LEDS-1 ; i++ ) g_led_buffer[i] = g_led_buffer[i+1];
     }
 
-    for (int i = 0; i < NUM_LEDS-1 ; i++ ) FastLED.leds()[i] = buffer[i];
-  
+    for (int i = 0; i < NUM_LEDS; i++ ) FastLED.leds()[i] = g_led_buffer[i];
 
 } // matrixEffect()
 
@@ -54,15 +51,15 @@ void matrix_ray(uint8_t colorIndex) {                                           
 
   thisphase += beatsin8(1,20, 50);                                                    // You can change direction and speed individually.
   thiscutoff = beatsin8(50,164,248);                                                  // This variable is used for the PWM of the lighting with the qsubd command below.
-  
+
   int thisbright = qsubd(cubicwave8(thisphase), thiscutoff);                          // It's PWM time. qsubd sets a minimum value called thiscutoff. If < thiscutoff, then thisbright = 0. Otherwise, thisbright = thiscutoff.
- 
+
   if (thisdir == 0) {                                                                 // Depending on the direction, we'll put that brightness in one end of the array. Andrew Tuline wrote this.
-    FastLED.leds()[0] = ColorFromPalette(g_currentPalette, colorIndex, thisbright, LINEARBLEND); 
+    FastLED.leds()[0] = ColorFromPalette(g_currentPalette, colorIndex, thisbright, LINEARBLEND);
     memmove(FastLED.leds()+1, FastLED.leds(), (NUM_LEDS-1)*3);                                            // Oh look, the FastLED method of copying LED values up/down the strand.
   } else {
     FastLED.leds()[NUM_LEDS-1] = ColorFromPalette( g_currentPalette, colorIndex, thisbright, LINEARBLEND);
-    memmove(FastLED.leds(), FastLED.leds()+1, (NUM_LEDS-1)*3);    
+    memmove(FastLED.leds(), FastLED.leds()+1, (NUM_LEDS-1)*3);
   }
 
 } // matrix_ray()
@@ -77,7 +74,7 @@ void matrixRayEffect () {
   }
 
   EVERY_N_MILLISECONDS(100) {                                 // Fixed rate of a palette blending capability.
-    uint8_t maxChanges = 24; 
+    uint8_t maxChanges = 24;
     nblendPaletteTowardPalette(g_currentPalette, g_targetPalette, maxChanges);
   }
 
@@ -86,4 +83,4 @@ void matrixRayEffect () {
     g_targetPalette = CRGBPalette16(CHSV(random8(), 255, random8(128,255)), CHSV(random8(), 255, random8(128,255)), CHSV(random8(), 192, random8(128,255)), CHSV(random8(), 255, random8(128,255)));
   }
 
-} // matrixRayEffect() 
+} // matrixRayEffect()

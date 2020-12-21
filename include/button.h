@@ -3,15 +3,15 @@
  * By Jeff Saltzman
  *
  * Modified by: Andrew Tuline
- * 
+ *
  * Oct. 13, 2009
  *
  * To keep a physical interface as simple as possible, this sketch demonstrates generating four output events from a single push-button.
- * 
+ *
  * 1) Click:  rapid press and release
  * 2) Double-Click:  two clicks in quick succession
  * 3) Press and Hold:  holding the button down
- * 
+ *
  * http://forum.arduino.cc/index.php?topic=14479.0
  *
  */
@@ -40,8 +40,8 @@ boolean waitForUp = false;        // when held, whether to wait for the up event
 boolean holdEventPast = false;    // whether or not the hold event happened already
 
 
-uint8_t checkButton(int pin) {    
-    
+uint8_t checkButton(int pin) {
+
    uint8_t event = 0;
    buttonVal = digitalRead(pin);
    // Button pressed down
@@ -59,7 +59,7 @@ uint8_t checkButton(int pin) {
    }
    // Button released
    else if (buttonVal == HIGH && buttonLast == LOW && ((long)millis() - downTime) > debounce)
-   {        
+   {
        if (not ignoreUp)
        {
            upTime = millis();
@@ -94,6 +94,6 @@ uint8_t checkButton(int pin) {
        }
    }
    buttonLast = buttonVal;
-   return event; 
+   return event;
 
 } // checkButton()

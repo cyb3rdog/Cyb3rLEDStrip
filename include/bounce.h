@@ -21,7 +21,7 @@ class BouncingBallEffect
         return sqrt(-2 * Gravity * height);         // Because MATH!
     }
 
-    size_t  _cLength;           
+    size_t  _cLength;
     size_t  _cBalls;
     byte    _fadeRate;
     bool    _bMirrored;
@@ -48,7 +48,7 @@ class BouncingBallEffect
         : _cLength(cLength - 1),
           _cBalls(ballCount),
           _fadeRate(fade),
-          _bMirrored(bMirrored)         
+          _bMirrored(bMirrored)
     {
         ClockTimeAtLastBounce = new double[ballCount];
         Height = new double[ballCount];
@@ -79,7 +79,7 @@ class BouncingBallEffect
         }
         else
             FastLED.clear();
-        
+
         // Draw each of the balls
 
         for (size_t i = 0; i < _cBalls; i++)

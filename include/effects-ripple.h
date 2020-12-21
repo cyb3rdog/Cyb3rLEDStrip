@@ -1,7 +1,7 @@
 #include "FastLED.h"
 
 // Min is 2 and value has to be divisible by two because each ripple has a left and right component. This cuts down on bouncing code.
-#define maxRipples 6                                                            
+#define maxRipples 6
 
 //----------------- Ripple structure definition ----------------------------------------------------------------
 
@@ -19,15 +19,15 @@ struct ripple {
   bool exist;                                           // 0 to 1
 
   void Move() {
-    
+
     pos += velocity;
     life++;
-    
+
     if (pos > NUM_LEDS - 1) {                           // Bounce back from far end.
       velocity *= -1;
       pos = NUM_LEDS - 1;
     }
-    
+
     if (pos < 0) {                                      // Bounce back from 0.
       velocity *= -1;
       pos = 0;
@@ -36,11 +36,11 @@ struct ripple {
     brightness = scale8(brightness, fade);              // Adjust brightness accordingly to strip length
 
     if (life > maxLife) exist = false;                  // Kill it once it's expired.
-    
+
   } // Move()
-  
+
   void Init(uint8_t Fade, uint8_t MaxLife) {                 // Typically 216, 20
-    
+
     pos = random8(NUM_LEDS/8, NUM_LEDS-NUM_LEDS/8);     // Avoid spawning too close to edge.
     velocity = 1;                                       // -1 or 1
     life = 0;                                           // 0 to Maxlife
@@ -49,9 +49,9 @@ struct ripple {
     brightness = 255;                                   // 0 to 255
     color = millis();                                   // hue;
     fade = Fade;                                        // 192 called
-    
+
   } // Init()
-  
+
 }; // struct ripple
 
 typedef struct ripple Ripple;
@@ -68,7 +68,7 @@ void rippless() {
       ripples[i + 1].velocity *= -1;                                              // We want the other half of the ripple to go opposite direction.
     }
   }
-  
+
   for (int i = 0; i < maxRipples; i++) {                                          // Move the ripple if it exists
     if (ripples[i].exist) {
       FastLED.leds()[ripples[i].pos] = ColorFromPalette(g_currentPalette, ripples[i].color, ripples[i].brightness, LINEARBLEND);
@@ -77,27 +77,27 @@ void rippless() {
   }
 
   fadeToBlackBy(FastLED.leds(), NUM_LEDS, 160);
-  
+
 } // rippless()
 
 
 void SetupMySimilar4Palette() {                                                   // Create a palette with colours close to each other.
 
   uint8_t thishue = random8();
-  
+
   g_targetPalette = CRGBPalette16(CHSV(thishue+random8(32), 255, random8(128,255)),
                                 CHSV(thishue+random8(32), 255, random8(192,255)),
                                 CHSV(thishue+random8(32), 192, random8(192,255)),
                                 CHSV(thishue+random8(32), 255, random8(128,255)));
-                                
+
 } // SetupMySimilar4Palette()
 
 
 void RipplessEffect() {
 
   EVERY_N_MILLISECONDS(50) {                                                      // Smooth palette transitioning runs continuously.
-    uint8_t maxChanges = 24; 
-      nblendPaletteTowardPalette(g_currentPalette, g_targetPalette, maxChanges);  
+    uint8_t maxChanges = 24;
+      nblendPaletteTowardPalette(g_currentPalette, g_targetPalette, maxChanges);
   }
 
   EVERY_N_SECONDS(5) {
@@ -107,7 +107,7 @@ void RipplessEffect() {
   EVERY_N_MILLIS(50) {                                                            // Sets the original delay time.
     rippless();                                                                   // Run the ripple routine.
   }
-  
+
 } // RipplessEffect()
 
 
@@ -118,14 +118,14 @@ uint8_t rippleColour;                                               // Ripple co
 int rippleCenter = 0;                                               // Center of the current ripple.
 int rippleStep = -1;                                                // -1 is the initializing step.
 uint8_t rippleFade = 255;                                           // Starting brightness.
-#define rippleMaxSteps 16                                           // Case statement wouldn't allow a variable.
-uint8_t rippleFader = 80;
+#define rippleMaxSteps 12                                           // Case statement wouldn't allow a variable.
+uint8_t rippleFader = 50;
 
 
 void ripple() {
 
-  fadeToBlackBy(FastLED.leds(), NUM_LEDS, rippleFader );                 // 8 bit, 1 = slow, 255 = fast
-  
+  fadeToBlackBy(g_led_buffer, NUM_LEDS, rippleFader);                 // 8 bit, 1 = slow, 255 = fast
+
   switch (rippleStep) {
 
     case -1:                                                 // Initialize ripple variables.
@@ -135,8 +135,8 @@ void ripple() {
       break;
 
     case 0:
-      FastLED.leds()[rippleCenter] = ColorFromPalette(g_currentPalette, rippleColour, rippleFade, g_currentBlending);
-      
+      g_led_buffer[rippleCenter] = ColorFromPalette(g_currentPalette, rippleColour, rippleFade, g_currentBlending);
+
       rippleStep ++;
       break;
 
@@ -145,24 +145,26 @@ void ripple() {
       break;
 
     default:                                                  // Middle of the ripples.
-      FastLED.leds()[(rippleCenter + rippleStep + NUM_LEDS) % NUM_LEDS] += ColorFromPalette(g_currentPalette, rippleColour, rippleFade/rippleStep*2, g_currentBlending);       // Simple wrap from Marc Miller
-      FastLED.leds()[(rippleCenter - rippleStep + NUM_LEDS) % NUM_LEDS] += ColorFromPalette(g_currentPalette, rippleColour, rippleFade/rippleStep*2, g_currentBlending);
+      g_led_buffer[(rippleCenter + rippleStep + NUM_LEDS) % NUM_LEDS] += ColorFromPalette(g_currentPalette, rippleColour, rippleFade/rippleStep*2, g_currentBlending);       // Simple wrap from Marc Miller
+      g_led_buffer[(rippleCenter - rippleStep + NUM_LEDS) % NUM_LEDS] += ColorFromPalette(g_currentPalette, rippleColour, rippleFade/rippleStep*2, g_currentBlending);
       rippleStep ++;                                          // Next step.
-      break;  
+      break;
   } // switch step
-  
+
+  for (int i = 0; i < NUM_LEDS ; i++ ) FastLED.leds()[i] = g_led_buffer[i];
+
 } // ripple()
 
 
 void RippleEffect () {
 
   EVERY_N_MILLISECONDS(100) {
-    uint8_t maxChanges = 24; 
+    uint8_t maxChanges = 24;
     nblendPaletteTowardPalette(g_currentPalette, g_targetPalette, maxChanges);   // AWESOME palette blending capability.
   }
 
   EVERY_N_SECONDS(3) {
-    g_targetPalette = CRGBPalette16(CHSV(random8(), 255, 32), CHSV(random8(), random8(64)+192, 255), CHSV(random8(), 255, 32), CHSV(random8(), 255, 255)); 
+    g_targetPalette = CRGBPalette16(CHSV(random8(), 255, 32), CHSV(random8(), random8(64)+192, 255), CHSV(random8(), 255, 32), CHSV(random8(), 255, 255));
   }
 
   EVERY_N_MILLISECONDS(EFFECT_SPEED) {                                   // FastLED based non-blocking delay to update/display the sequence.

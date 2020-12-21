@@ -4,6 +4,7 @@
 
 
 static uint8_t        g_hue = 0;
+static CRGB           g_led_buffer[NUM_LEDS];
 static TBlendType     g_currentBlending = LINEARBLEND;
 static CRGBPalette16  g_currentPalette = RainbowColors_p;
 static CRGBPalette16  g_targetPalette = g_currentPalette;
@@ -34,9 +35,9 @@ static CRGBPalette16  g_targetPalette = g_currentPalette;
 
 void DrawRainbow() {                              // FastLED's built-in rainbow generator.
 
-  //fill_rainbow(leds, NUM_LEDS, g_hue, 7);         
+  //fill_rainbow(leds, NUM_LEDS, g_hue, 7);
   RainbowBeat();
-  
+
 } // DrawRainbow()
 
 
@@ -44,12 +45,12 @@ void DrawRainbowWithGlitter() {                   // Built-in FastLED rainbow, p
 
   fill_rainbow(FastLED.leds(), NUM_LEDS, g_hue, 7);
   addGlitter(80);
-  
+
 } // DrawRainbowWithGlitter()
 
 
 void DrawRainbowMarch(){                          // Just Rainbow March
-    
+
   RainbowMarch(EFFECT_SPEED*4, 10);
 
 } // DrawRainbowMarch()
@@ -179,7 +180,7 @@ void DrawMatrix(){
   g_targetPalette = g_currentPalette;
   g_currentBlending = LINEARBLEND;
 
-  matrixEffect();  
+  matrixEffect();
 
 } // DrawMatrix()
 
@@ -197,7 +198,7 @@ void DrawMatrixRay(){
 
 
 void DrawTest(){
-  
+
   Animations();
 
 }
@@ -209,7 +210,7 @@ void DrawTest(){
 void DrawRainbowSinelon() {                                   // A colored dot sweeping back and forth, with fading trails.
 
   RainbowSinelon();
-  
+
 } // DrawSinelon()
 
 
@@ -218,7 +219,7 @@ void DrawConfetti() {                                         // Random colored 
   fadeToBlackBy(FastLED.leds(), NUM_LEDS, 10);
   int pos = random16(NUM_LEDS);
   FastLED.leds()[pos] += CHSV(g_hue + random8(64), SATURATION, 255);
-  
+
 } // DrawConfetti()
 
 
@@ -226,27 +227,26 @@ void juggle() {                                               // Eight colored d
 
   fadeToBlackBy(FastLED.leds(), NUM_LEDS, 20);
   byte dothue = 0;
-  
+
   for(int i = 0; i < 8; i++) {
     FastLED.leds()[beatsin16(i+7,0,NUM_LEDS-1)] |= CHSV(dothue, SATURATION, 255);
     dothue += 32;
   }
-  
+
 } // juggle()
 
 
-uint8_t   thisfade =   8;                                     // How quickly does it fade? Lower = slower fade rate.
 void twinkle() {
 
   if (random8() < 100) FastLED.leds()[random16(NUM_LEDS)] += ColorFromPalette(g_currentPalette, (1 ? random8() : g_hue), 255, g_currentBlending);
-  
+
 } // twinkle()
 
 
 //--------------------[ BLACK OFF ]--------------------------------------------------------------------------
 
 void DrawBlack(){                                            // Black OFF
-  fill_solid(FastLED.leds(), NUM_LEDS, CRGB::Black); 
+  fill_solid(FastLED.leds(), NUM_LEDS, CRGB::Black);
 
 } // DrawBlack()
 
@@ -258,16 +258,16 @@ typedef void (*SimplePatternList[])();                        // List of effects
 SimplePatternList EffectsList = {
   /* ---- RAINBOWS ---- */
   DrawRainbowCycle,
-  DrawRainbow, 
-  DrawRainbowWithGlitter, 
+  DrawRainbow,
+  DrawRainbowWithGlitter,
   DrawRainbowMarch,
   DrawRainbowPride,
   DrawPrideWithGlitter,
   DrawRainbowFade,
   DrawRainbowBPM,
-  DrawRainbowLong,  
+  DrawRainbowLong,
   //DrawRainbowTheatre,
-  //fill_grad,  
+  //fill_grad,
   DrawTest,
 
   /* STRIPES */
@@ -282,16 +282,16 @@ SimplePatternList EffectsList = {
   DrawMatrix,
   DrawMatrixRay,
 
-  /* ---- FIRE ---- */  
+  /* ---- FIRE ---- */
   DrawFireToCenter,
   DrawFireFromCenter,
   DrawChangingFire,
 
   /* ---- OTHER ---- */
-  //DrawConfetti,  
+  //DrawConfetti,
   juggle,
   twinkle,
-  //beatwaveEffect, 
+  //beatwaveEffect,
   //blendwaveEffect,
   blurEffect,
 
@@ -305,9 +305,9 @@ SimplePatternList EffectsList = {
 
 class EffectsLibrary
 {
-  
+
 protected:
-  
+
   uint8_t     SwichButtonPin;
   uint8_t     EEPROM_Address;
   uint8_t     CurrentEffectNumber;
@@ -321,26 +321,21 @@ private:
 
     if (b == 1) {                                               // Just a click event to advance to next pattern
       CurrentEffectNumber = (CurrentEffectNumber + 1) % ARRAY_SIZE(EffectsList);
-      //Serial.println(CurrentEffectNumber);
+      EEPROM.write(EEPROM_Address, CurrentEffectNumber);
     }
 
     if (b == 2) {                                               // A double-click event to reset to 0 pattern
       CurrentEffectNumber = 0;
-      //Serial.println(CurrentEffectNumber);
+      EEPROM.write(EEPROM_Address, CurrentEffectNumber);
     }
 
-    if (b == 3) {                                               // A hold event to write current pattern to EEPROM      
+    if (b == 3) {                                               // A hold event to write current pattern to EEPROM
       CurrentBrightness += 32 % 256;
-
-      EEPROM.write(EEPROM_Address, CurrentEffectNumber);
       EEPROM.write(EEPROM_Address + 0x04, CurrentBrightness);
-
-      //Serial.print("Writing: ");
-      //Serial.println(CurrentEffectNumber);
     }
   }
 
-public:  
+public:
 
   EffectsLibrary(uint8_t switch_button_pin = 0, uint8_t eeprom_address = 0)
   : SwichButtonPin(switch_button_pin),
@@ -358,7 +353,8 @@ public:
   void ChangeEffectByTime(int minutes = 5){
 
     EVERY_N_MINUTES(minutes ){
-      CurrentEffectNumber = (CurrentEffectNumber + 1) % ARRAY_SIZE(EffectsList); 
+      CurrentEffectNumber = (CurrentEffectNumber + 1) % ARRAY_SIZE(EffectsList);
+      EEPROM.write(EEPROM_Address, CurrentEffectNumber);
     }
 
   } // ChangeEffectByTime()

@@ -48,7 +48,7 @@ void DrawMarqueeMirrored()
     {
         FastLED.leds()[i] = CRGB::Black;
         FastLED.leds()[FastLED.count() - 1 - i] = CRGB::Black;
-    }   
+    }
 
     delay(EFFECT_SPEED);
 }

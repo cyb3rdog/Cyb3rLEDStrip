@@ -11,19 +11,19 @@ void Fire(CRGBPalette16 firePalette, int Cooling, int Sparking, int start = 0, i
   // Step 1.  Cool down every cell a little
   for( int i = start; i != offset - 1; i = i + direction ) {
     int cooldown = random(0, ((Cooling * 10) / NUM_LEDS / ratio) + 2);
-   
+
     if(cooldown>fireHeat[i]) {
       fireHeat[i]=0;
     } else {
       fireHeat[i]=fireHeat[i]-cooldown;
     }
   }
- 
+
   // Step 2.  Heat from each cell drifts 'up' and diffuses a little
   for( int k = offset - 1; k != start; k = k - direction ) {
     fireHeat[k] = (fireHeat[k - (1 * direction)] + fireHeat[k - (2 * direction)] + fireHeat[k - (2 * direction)]) / 3;
   }
-   
+
   // Step 3.  Randomly ignite new 'sparks' near the bottom
   if( random(255) < Sparking ) {
     int y = random(7);
@@ -44,7 +44,7 @@ void Fire(CRGBPalette16 firePalette, int Cooling, int Sparking, int start = 0, i
 int currentFireNumber = 0;
 
 void ChangingFire(int changeSpeed, int Cooling, int Sparking, int start = 0, int direction = 1, int ratio = 2){
-  
+
   EVERY_N_SECONDS(changeSpeed){
     currentFireNumber = (currentFireNumber + 1) % 13;
     switch(currentFireNumber) {
@@ -60,12 +60,12 @@ void ChangingFire(int changeSpeed, int Cooling, int Sparking, int start = 0, int
       case  9: g_targetPalette=LavaColors_p; break;
       case 10: g_targetPalette=HeatColors_p; break;
       case 11: g_targetPalette=CRGBPalette16( CRGB::Black, CRGB::Indigo, CRGB::DarkViolet,CRGB::Violet); break;
-      case 12: g_targetPalette=CRGBPalette16( CRGB::Black, CRGB::Indigo, CRGB::Crimson, CRGB::Pink); break;      
+      case 12: g_targetPalette=CRGBPalette16( CRGB::Black, CRGB::Indigo, CRGB::Crimson, CRGB::Pink); break;
     }
   }
-  
+
   EVERY_N_MILLISECONDS(EFFECT_SPEED) {
-    uint8_t maxChanges = 32; 
+    uint8_t maxChanges = 32;
     nblendPaletteTowardPalette(g_currentPalette, g_targetPalette, maxChanges);
   }
 
@@ -74,7 +74,7 @@ void ChangingFire(int changeSpeed, int Cooling, int Sparking, int start = 0, int
 }
 
 void Fire(int Cooling, int Sparking, int start = 0, int direction = 1, int ratio = 2){
-  
+
   g_currentPalette = LavaColors_p;
   Fire(g_currentPalette, Cooling, Sparking, start, direction, ratio);
 

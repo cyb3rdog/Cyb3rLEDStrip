@@ -2,7 +2,7 @@
 #define FASTLED_INTERNAL
 #include <FastLED.h>
 
-static const CRGB TwinkleColors [] = 
+static const CRGB TwinkleColors [] =
 {
     CRGB::Red,
     CRGB::Blue,
@@ -19,5 +19,5 @@ void DrawTwinkle()
         passCount = 0;
         FastLED.clear(false);
     }
-    FastLED.leds()[random(NUM_LEDS)] = TwinkleColors[random(0, ARRAY_SIZE(TwinkleColors))];    
+    FastLED.leds()[random(NUM_LEDS)] = TwinkleColors[random(0, ARRAY_SIZE(TwinkleColors))];
 }
