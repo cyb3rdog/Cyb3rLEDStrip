@@ -8,6 +8,7 @@ static byte fireHeat[NUM_LEDS];
 void Fire(CRGBPalette16 firePalette, int Cooling, int Sparking, int start = 0, int direction = 1, int ratio = 2){
 
   int offset = start + (NUM_LEDS / ratio * direction);
+
   // Step 1.  Cool down every cell a little
   for( int i = start; i != offset - 1; i = i + direction ) {
     int cooldown = random(0, ((Cooling * 10) / NUM_LEDS / ratio) + 2);
@@ -28,7 +29,6 @@ void Fire(CRGBPalette16 firePalette, int Cooling, int Sparking, int start = 0, i
   if( random(255) < Sparking ) {
     int y = random(7);
     fireHeat[start + y * direction] = fireHeat[start + y * direction] + random(160,255);
-    //heat[y] = random(160,255);
   }
 
   // Step 4.  Convert heat to LED colors
@@ -75,7 +75,8 @@ void ChangingFire(int changeSpeed, int Cooling, int Sparking, int start = 0, int
 
 void Fire(int Cooling, int Sparking, int start = 0, int direction = 1, int ratio = 2){
 
-  g_currentPalette = LavaColors_p;
+  g_currentPalette = CRGBPalette16( CRGB::Black, CRGB::Red, CRGB::Yellow, CRGB::White);
+  g_targetPalette = g_currentPalette;
   Fire(g_currentPalette, Cooling, Sparking, start, direction, ratio);
 
 }

@@ -41,13 +41,14 @@ void setup() {
   set_max_power_indicator_LED(LED_BUILTIN);
 
   effectsLibrary = EffectsLibrary(BUTTON_PIN, EEPROM_ADDR);
+  effectsLibrary.AutoChangeInterval = 5;
+  effectsLibrary.AutoChangeEnabled = true;
 
 }
 
 void loop()
 {
 
-  effectsLibrary.ChangeEffectByTime(5);
   effectsLibrary.MainLoop();
 
   FastLED.show(BRIGHTNESS);                                 //  Show and delay

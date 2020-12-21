@@ -104,13 +104,16 @@ void RainbowBPM() {
 
 void RainbowSinelon(){
 
-  //fadeToBlackBy(FastLED.leds(), NUM_LEDS, 20);
-  //int pos = beatsin16(13,0,NUM_LEDS-1);
-  //FastLED.leds()[pos] += CHSV(g_hue, SATURATION, 255);
+  fadeToBlackBy(g_led_buffer, NUM_LEDS, 20);
 
-  int pos1 = beatsin16(COLOR_SPEED,0,NUM_LEDS - 1);
-  int pos2 = beatsin16(COLOR_SPEED,0,NUM_LEDS - 1);
-  FastLED.leds()[(pos1+pos2)/2] += ColorFromPalette(g_currentPalette, g_hue, 255, g_currentBlending);
+  //int pos = beatsin16(13,0,NUM_LEDS-1);
+  //g_led_buffer[pos] += CHSV(g_hue, SATURATION, 255);
+
+  int pos1 = beatsin16(COLOR_SPEED /2,0,NUM_LEDS - 1);
+  int pos2 = beatsin16(COLOR_SPEED /2,0,NUM_LEDS - 1);
+  g_led_buffer[(pos1+pos2)/2] += ColorFromPalette(g_currentPalette, g_hue, 255, g_currentBlending);
+
+  for (int i = 0; i < NUM_LEDS; i++ ) FastLED.leds()[i] = g_led_buffer[i];
 
 }
 
@@ -121,6 +124,6 @@ void RainbowMarch(uint8_t thisdelay, uint8_t deltahue) {       // The fill_rainb
   //thishue = beat8(50);                                       // This uses a FastLED sawtooth generator. Again, the '50' should not change on the fly.
   //thishue = beatsin8(EFFECT_SPEED,0,255);                    // This can change speeds on the fly. You can also add these to each other.
 
-  fill_rainbow(FastLED.leds(), NUM_LEDS, thishue, deltahue);             // Use FastLED's fill_rainbow routine.
+  fill_rainbow(FastLED.leds(), NUM_LEDS, thishue, deltahue);   // Use FastLED's fill_rainbow routine.
 
 } // RainbowMarch()

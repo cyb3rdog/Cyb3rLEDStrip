@@ -151,7 +151,7 @@ void ripple() {
       break;
   } // switch step
 
-  for (int i = 0; i < NUM_LEDS ; i++ ) FastLED.leds()[i] = g_led_buffer[i];
+  DrawAllPixels(g_led_buffer);
 
 } // ripple()
 

@@ -23,10 +23,14 @@ inline float RandomFloat()
 // Returns a fraction of a color; abstracts the fadeToBlack out to this function in case we
 // want to improve the color math or do color correction all in one location at a later date.
 
-CRGB ColorFraction(CRGB colorIn, float fraction)
+inline CRGB ColorFraction(CRGB colorIn, float fraction)
 {
   fraction = min(1.0f, fraction);
   return CRGB(colorIn).fadeToBlackBy(255 * (1.0f - fraction));
+}
+
+void DrawAllPixels(CRGB* led_buffer){
+  for (int i = 0; i < NUM_LEDS; i++ ) FastLED.leds()[i] = led_buffer[i];
 }
 
 void DrawPixels(float fPos, float count, CRGB color)
@@ -101,7 +105,19 @@ void setPixelHeatColor (int Pixel, byte temperature) {
   }
 }
 
+void blink(CRGB color, int duration)
+{
 
+  fill_solid(FastLED.leds(), NUM_LEDS, color);
+  fadeToBlackBy(FastLED.leds(), NUM_LEDS, 255 - BRIGHTNESS);
+  FastLED.show(BRIGHTNESS);
+  delay(duration);
+
+  fill_solid(FastLED.leds(), NUM_LEDS, CRGB::Black);
+  FastLED.show(BRIGHTNESS);
+  delay(duration / 3);
+
+}
 
 void addSnow(int flakes = 1){
   for (int i = 0; i < flakes; i++){
@@ -113,4 +129,3 @@ void addGlitter( fract8 chanceOfGlitter) {
   if( random8() < chanceOfGlitter) {
     FastLED.leds()[ random16(NUM_LEDS) ] += CRGB(BRIGHTNESS,BRIGHTNESS,BRIGHTNESS);}
 }
-

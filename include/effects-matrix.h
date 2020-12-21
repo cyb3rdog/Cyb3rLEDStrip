@@ -15,7 +15,6 @@ void matrixEffect() {
 
     if (huerot) palIndex++;
 
-    //CRGB led = (thisdir == 0) ? FastLED.leds()[0] : FastLED.leds()[NUM_LEDS-1];
     CRGB led = (thisdir == 0) ? g_led_buffer[0] : g_led_buffer[NUM_LEDS-1];
 
     if (random8(90) > 80) {
@@ -36,7 +35,7 @@ void matrixEffect() {
       for (int i = 0; i < NUM_LEDS-1 ; i++ ) g_led_buffer[i] = g_led_buffer[i+1];
     }
 
-    for (int i = 0; i < NUM_LEDS; i++ ) FastLED.leds()[i] = g_led_buffer[i];
+    DrawAllPixels(g_led_buffer);
 
 } // matrixEffect()
 
@@ -55,12 +54,14 @@ void matrix_ray(uint8_t colorIndex) {                                           
   int thisbright = qsubd(cubicwave8(thisphase), thiscutoff);                          // It's PWM time. qsubd sets a minimum value called thiscutoff. If < thiscutoff, then thisbright = 0. Otherwise, thisbright = thiscutoff.
 
   if (thisdir == 0) {                                                                 // Depending on the direction, we'll put that brightness in one end of the array. Andrew Tuline wrote this.
-    FastLED.leds()[0] = ColorFromPalette(g_currentPalette, colorIndex, thisbright, LINEARBLEND);
-    memmove(FastLED.leds()+1, FastLED.leds(), (NUM_LEDS-1)*3);                                            // Oh look, the FastLED method of copying LED values up/down the strand.
+    g_led_buffer[0] = ColorFromPalette(g_currentPalette, colorIndex, thisbright, LINEARBLEND);
+    memmove(g_led_buffer+1, g_led_buffer, (NUM_LEDS-1)*3);                                            // Oh look, the FastLED method of copying LED values up/down the strand.
   } else {
-    FastLED.leds()[NUM_LEDS-1] = ColorFromPalette( g_currentPalette, colorIndex, thisbright, LINEARBLEND);
-    memmove(FastLED.leds(), FastLED.leds()+1, (NUM_LEDS-1)*3);
+    g_led_buffer[NUM_LEDS-1] = ColorFromPalette( g_currentPalette, colorIndex, thisbright, LINEARBLEND);
+    memmove(g_led_buffer, g_led_buffer+1, (NUM_LEDS-1)*3);
   }
+
+  DrawAllPixels(g_led_buffer);
 
 } // matrix_ray()
 
