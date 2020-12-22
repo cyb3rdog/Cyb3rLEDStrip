@@ -9,7 +9,7 @@
 #define COLOR_ORDER   RGB
 #define CHIPSET       WS2801
 
-#define NUM_LEDS      95
+#define NUM_LEDS      93
 #define BRIGHTNESS    96
 #define SATURATION    255
 
@@ -48,9 +48,8 @@ void loop()
 
   effectsLibrary.MainLoop();
 
-  FastLED.show(BRIGHTNESS);                                 //  Show and delay
+  FastLED.show(BRIGHTNESS);                                 //  Show
 
-  //delay(SPEED);
   //Serial.println(LEDS.getFPS());                          // Display frames per second on the serial monitor.
 
 } // loop()

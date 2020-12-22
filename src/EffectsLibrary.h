@@ -210,8 +210,9 @@ void DrawJuggle() {                               // Eight colored dots, weaving
 
 void DrawTwinkle() {
 
-  twinkleEffect();
-  //if (random8() < 100) FastLED.leds()[random16(NUM_LEDS)] += ColorFromPalette(g_currentPalette, (1 ? random8() : g_hue), 255, g_currentBlending);
+  //twinkleEffect();
+  if (random8() < 100)
+    FastLED.leds()[random16(NUM_LEDS)] += ColorFromPalette(g_currentPalette, (1 ? random8() : g_hue), 255, g_currentBlending);
 
 } // DrawTwinkle()
 
@@ -223,7 +224,7 @@ void DrawSnowSparke() {
 
 //--------------------[ BLACK OFF ]--------------------------------------------------------------------------
 
-void DrawBlack(){                                            // Black OFF
+void DrawBlack(){                                 // Black OFF
 
   fill_solid(FastLED.leds(), NUM_LEDS, CRGB::Black);
 
@@ -232,7 +233,7 @@ void DrawBlack(){                                            // Black OFF
 //-------------------------------------------[ EFFECT LIST ]-------------------------------------------------------
 
 
-typedef void (*SimplePatternList[])();                        // List of effects to cycle through. Each is defined as a separate function.
+typedef void (*SimplePatternList[])();            // List of effects to cycle through. Each is defined as a separate function.
 
 SimplePatternList EffectsList = {
   /* ---- RAINBOWS ---- */
@@ -300,21 +301,21 @@ private:
 
     Button.Update();
 
-    if (Button.clicks == 1) {                                               // Just a click event to advance to next pattern
+    if (Button.clicks == 1) {                     // Just a click event to advance to next pattern
       CurrentEffectNumber = (CurrentEffectNumber + 1) % ARRAY_SIZE(EffectsList);
       EEPROM.write(EEPROM_Address, CurrentEffectNumber);
     }
 
-    if (Button.clicks == 2) {                                               // A double-click event to reset to 0 pattern
+    if (Button.clicks == 2) {                     // A double-click event to reset to 0 pattern
       CurrentEffectNumber = 0;
       EEPROM.write(EEPROM_Address, CurrentEffectNumber);
     }
 
-    if (Button.clicks == 3) {
+    if (Button.clicks == 3) {                     // Triple-click to toggle auto-change mode
       SetAutoChange(!AutoChangeEnabled);
     }
 
-    if (Button.clicks == -1) {                                               // A hold event to change brightness
+    if (Button.clicks == -1) {                    // A hold event to change brightness
       SetBrightness(CurrentBrightness + 32 % 256);
       blink(CRGB::White, 100);
     }

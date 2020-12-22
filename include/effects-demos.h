@@ -7,7 +7,7 @@
 
 // Initialize global variables for sequences
 uint8_t rainbowMatchHue = 0;                // Starting hue value.
-uint8_t rainbowMarchRotation = 1;            // Hue rotation speed. Includes direction.
+uint8_t rainbowMarchRotation = 1;           // Hue rotation speed. Includes direction.
 uint8_t rainbowMatchDeltahue = 1;           // Hue change between pixels.
 bool rainbowMarchDirection = 0;             // I use a direction variable instead of signed math so I can use it in multiple routines.
 
@@ -22,7 +22,7 @@ void rainbowMarchEffect(int thishue = 0) {  // The fill_rainbow call doesn't sup
 
 } // rainbow_march()
 
-void ChangeRainbowMarch() {                                             // A time (rather than loop) based demo sequencer. This gives us full control over the length of each sequence.
+void ChangeRainbowMarch() {                                   // A time (rather than loop) based demo sequencer. This gives us full control over the length of each sequence.
 
   uint8_t secondHand = (millis() / 1000) % 60;                // Change '60' to a different value to change length of the loop.
   static uint8_t lastSecond = 99;                             // Static variable, means it's only defined once. This is our 'debounce' variable.
@@ -45,7 +45,7 @@ void ChangeRainbowMarch() {                                             // A tim
 void RainbowMarchDemo () {
 
   ChangeRainbowMarch();
-  EVERY_N_MILLISECONDS(EFFECT_SPEED) {                           // FastLED based non-blocking delay to update/display the sequence.
+  EVERY_N_MILLISECONDS(EFFECT_SPEED) {                        // FastLED based non-blocking delay to update/display the sequence.
     rainbowMarchEffect();
   }
 
@@ -104,18 +104,18 @@ void blendwaveEffect() {
 
 CRGB ledsB[NUM_LEDS];
 
-void animationA() {                                             // running red stripe.
+void animationA() {                                           // running red stripe.
 
   for (int i = 0; i < NUM_LEDS; i++) {
-    uint8_t red = (millis() / 10) + (i * 12);                    // speed, length
+    uint8_t red = (millis() / 10) + (i * 12);                 // speed, length
     if (red > 128) red = 0;
     g_led_buffer[i] = CRGB(red, 0, 0);
   }
 } // animationA()
 
-void animationB() {                                               // running green stripe in opposite direction.
+void animationB() {                                           // running green stripe in opposite direction.
   for (int i = 0; i < NUM_LEDS; i++) {
-    uint8_t green = (millis() / 5) - (i * 12);                    // speed, length
+    uint8_t green = (millis() / 5) - (i * 12);                // speed, length
     if (green > 128) green = 0;
     ledsB[i] = CRGB(0, green, 0);
   }
@@ -124,12 +124,12 @@ void animationB() {                                               // running gre
 void stripeMixEffect()
 {
 
-    animationA();                                               // render the first animation into leds2
-    animationB();                                               // render the second animation into leds3
+    animationA();                                             // render the first animation into leds2
+    animationB();                                             // render the second animation into leds3
 
-    uint8_t ratio = beatsin8(2, 64, 255);                       // Alternate every minute
+    uint8_t ratio = beatsin8(2, 64, 255);                     // Alternate every minute
 
-    for (int i = 0; i < NUM_LEDS; i++) {                        // mix the 2 arrays together
+    for (int i = 0; i < NUM_LEDS; i++) {                      // mix the 2 arrays together
       FastLED.leds()[i] = blend( g_led_buffer[i], ledsB[i], ratio );
     }
 
@@ -141,7 +141,7 @@ void blurEffect()
 {
 
   uint8_t blurAmount = dim8_raw( beatsin8(3,64, 192) );       // A sinewave at 3 Hz with values ranging from 64 to 192.
-  blur1d( FastLED.leds(), NUM_LEDS, blurAmount);                        // Apply some blurring to whatever's already on the strip, which will eventually go black.
+  blur1d( FastLED.leds(), NUM_LEDS, blurAmount);              // Apply some blurring to whatever's already on the strip, which will eventually go black.
 
   uint8_t  i = beatsin8(  9, 0, NUM_LEDS);
   uint8_t  j = beatsin8( 7, 0, NUM_LEDS);
@@ -170,7 +170,7 @@ void easeEffect() {
   lerpVal = lerp8by8(0, NUM_LEDS, easeOutVal);                // Map it to the number of LED's you have.
 
   FastLED.leds()[lerpVal] = CRGB::Red;
-  fadeToBlackBy(FastLED.leds(), NUM_LEDS, 16);                          // 8 bit, 1 = slow fade, 255 = fast fade
+  fadeToBlackBy(FastLED.leds(), NUM_LEDS, 16);                // 8 bit, 1 = slow fade, 255 = fast fade
 
 } // easeEffect()
 
@@ -178,26 +178,26 @@ void easeEffect() {
 
 void fadein() {
 
-  random16_set_seed(535);                                                           // The randomizer needs to be re-set each time through the loop in order for the 'random' numbers to be the same each time through.
+  random16_set_seed(535);                                     // The randomizer needs to be re-set each time through the loop in order for the 'random' numbers to be the same each time through.
 
   for (int i = 0; i<NUM_LEDS; i++) {
-    uint8_t fader = sin8(millis()/random8(10,20));                                  // The random number for each 'i' will be the same every time.
+    uint8_t fader = sin8(millis()/random8(10,20));            // The random number for each 'i' will be the same every time.
     FastLED.leds()[i] = ColorFromPalette(g_currentPalette, i*20, fader, g_currentBlending);       // Now, let's run it through the palette lookup.
   }
 
-  random16_set_seed(millis());                                                      // Re-randomizing the random number seed for other routines.
+  random16_set_seed(millis());                                // Re-randomizing the random number seed for other routines.
 
 } // fadein()
 
 void fadeEffect(){
 
-  EVERY_N_MILLISECONDS(100) {                                                 // FastLED based non-blocking FIXED delay.
+  EVERY_N_MILLISECONDS(100) {                                 // FastLED based non-blocking FIXED delay.
     uint8_t maxChanges = 24;
     nblendPaletteTowardPalette(g_currentPalette, g_targetPalette, maxChanges);    // AWESOME palette blending capability.
   }
 
-  EVERY_N_SECONDS(5) {                                                        // Change the target palette to a random one every 5 seconds.
-    uint8_t baseC = random8(255);                                             // Use the built-in random number generator as we are re-initializing the FastLED one.
+  EVERY_N_SECONDS(5) {                                        // Change the target palette to a random one every 5 seconds.
+    uint8_t baseC = random8(255);                             // Use the built-in random number generator as we are re-initializing the FastLED one.
     g_targetPalette = CRGBPalette16(CHSV(baseC+random8(0,32), 255, random8(128, 255)), CHSV(baseC+random8(0,32), 255, random8(128, 255)), CHSV(baseC+random8(0,32), 192, random8(128, 255)), CHSV(baseC+random8(0,32), 255, random8(128, 255)));
   }
 
@@ -232,7 +232,7 @@ void inoise8_mover() {
   uint8_t pixlen = map(locn,0,255,0,NUM_LEDS);                // Map that to the length of the strand.
   FastLED.leds()[pixlen] = ColorFromPalette(g_currentPalette, pixlen, 255, LINEARBLEND);   // Use that value for both the location as well as the palette index colour for the pixel.
 
-  dist += beatsin8(10,1,4);                                                // Moving along the distance (that random number we started out with). Vary it a bit with a sine wave.
+  dist += beatsin8(10,1,4);                                   // Moving along the distance (that random number we started out with). Vary it a bit with a sine wave.
 
 } // inoise8_mover()
 
@@ -254,12 +254,12 @@ void moverEffect(int maxChanges = 24) {
 
 //-------------------------------------------[ plasmaEffect ]------------------------------------------------------------------------------
 
-void plasma() {                                                 // This is the heart of this program. Sure is short. . . and fast.
+void plasma() {                                               // This is the heart of this program. Sure is short. . . and fast.
 
-  int thisPhase = beatsin8(6,-64,64);                           // Setting phase change for a couple of waves.
+  int thisPhase = beatsin8(6,-64,64);                         // Setting phase change for a couple of waves.
   int thatPhase = beatsin8(7,-64,64);
 
-  for (int k=0; k<NUM_LEDS; k++) {                              // For each of the LED's in the strand, set a brightness based on a wave as follows:
+  for (int k=0; k<NUM_LEDS; k++) {                            // For each of the LED's in the strand, set a brightness based on a wave as follows:
 
     int colorIndex = cubicwave8((k*23)+thisPhase)/2 + cos8((k*15)+thatPhase)/2;           // Create a wave and add a phase change and add another wave with its own phase change.. Hey, you can even change the frequencies if you wish.
     int thisBright = qsuba(colorIndex, beatsin8(7,0,96));                                 // qsub gives it a bit of 'black' dead space by setting sets a minimum value. If colorIndex < current value of beatsin8(), then bright = 0. Otherwise, bright = colorIndex..

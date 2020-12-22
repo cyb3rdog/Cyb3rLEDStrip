@@ -1,2 +1,2 @@
 # Cyb3rLEDStrip
-Project to control Arduino FastLED led strip
+LED Strip Arduino Controller project using FastLED.

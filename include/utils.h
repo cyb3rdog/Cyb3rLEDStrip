@@ -1,16 +1,3 @@
-// FramesPerSecond
-//
-// Tracks a weighted average to smooth out the values that it calcs as the simple reciprocal
-// of the amount of time taken specified by the caller.  So 1/3 of a second is 3 fps, and it
-// will take up to 10 frames or so to stabilize on that value.
-
-double FramesPerSecond(double seconds)
-{
-  static double framesPerSecond;
-  framesPerSecond = (framesPerSecond * .9) + (1.0 / seconds * .1);
-  return framesPerSecond;
-}
-
 // FractionalColor
 //
 // Returns a fraction of a color; abstracts the fadeToBlack out to this function in case we

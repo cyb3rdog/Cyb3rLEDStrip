@@ -46,7 +46,7 @@ int currentFireNumber = 0;
 void ChangingFire(int changeSpeed, int Cooling, int Sparking, int start = 0, int direction = 1, int ratio = 2){
 
   EVERY_N_SECONDS(changeSpeed){
-    currentFireNumber = (currentFireNumber + 1) % 13;
+    currentFireNumber = (currentFireNumber + 1) % 11;
     switch(currentFireNumber) {
       case  0: g_targetPalette=CRGBPalette16( CRGB::Black, CRGB::Blue, CRGB::Aqua, CRGB::White); break;
       case  1: g_targetPalette=CloudColors_p; break;
@@ -57,10 +57,8 @@ void ChangingFire(int changeSpeed, int Cooling, int Sparking, int start = 0, int
       case  6: g_targetPalette=CRGBPalette16( CRGB::Black, CRGB::DarkGray, CRGB::Gray, CRGB::Silver); break;
       case  7: g_targetPalette=CRGBPalette16( CRGB::Black, CRGB::DarkRed, CRGB::Orange, CRGB::White); break;
       case  8: g_targetPalette=CRGBPalette16( CRGB::Black, CRGB::Red, CRGB::Yellow, CRGB::White); break;
-      case  9: g_targetPalette=LavaColors_p; break;
-      case 10: g_targetPalette=HeatColors_p; break;
-      case 11: g_targetPalette=CRGBPalette16( CRGB::Black, CRGB::Indigo, CRGB::DarkViolet,CRGB::Violet); break;
-      case 12: g_targetPalette=CRGBPalette16( CRGB::Black, CRGB::Indigo, CRGB::Crimson, CRGB::Pink); break;
+      case  9: g_targetPalette=CRGBPalette16( CRGB::Black, CRGB::Indigo, CRGB::DarkViolet,CRGB::Violet); break;
+      case 10: g_targetPalette=CRGBPalette16( CRGB::Black, CRGB::Indigo, CRGB::Crimson, CRGB::Pink); break;
     }
   }
 
