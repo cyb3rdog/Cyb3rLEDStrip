@@ -4,30 +4,26 @@
 
 
 //-------------------------------------------[ matrixEffect ]-----------------------------------------------------------------------------
-
 // Initialize global variables for sequences.
-uint8_t    palIndex =  95;
-int        thisdir =   0;
-bool        huerot =   1;                                     // Does the hue rotate? 1 = yes
-uint8_t      bri = 16;
+uint8_t    decay = 16;
 
-void matrixEffect() {
+void matrixEffect(int direction = 0, bool rotateHue = 1, int palIndex =  95) {
 
-    if (huerot) palIndex++;
+    if (rotateHue) palIndex++;
 
-    CRGB led = (thisdir == 0) ? g_led_buffer[0] : g_led_buffer[NUM_LEDS-1];
+    CRGB led = (direction == 0) ? g_led_buffer[0] : g_led_buffer[NUM_LEDS-1];
 
     if (random8(90) > 80) {
-      bri = 256 / 3;
+      decay = 256 / 3;
       led = ColorFromPalette(g_currentPalette, palIndex, 255, g_currentBlending);
     } else {
-      bri = bri - random(16);
-      if (bri < 0 || bri > 256 / 3) bri = 0;
+      decay = decay - random(16);
+      if (decay < 0 || decay > 256 / 3) decay = 0;
       //led = CHSV(96, SATURATION, bri);
-      led = ColorFromPalette(g_currentPalette, palIndex -16, bri, g_currentBlending);
+      led = ColorFromPalette(g_currentPalette, palIndex -16, decay, g_currentBlending);
     }
 
-    if (thisdir == 0) {
+    if (direction == 0) {
       g_led_buffer[0] = led;
       for (int i = NUM_LEDS-1; i >0 ; i-- ) g_led_buffer[i] = g_led_buffer[i-1];
     } else {

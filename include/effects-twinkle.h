@@ -3,7 +3,7 @@
 #include <FastLED.h>
 
 
-static const CRGB TwinkleColors [] =
+const CRGB TwinkleColors [] =
 {
     CRGB::Red,
     CRGB::Blue,
@@ -15,7 +15,7 @@ static const CRGB TwinkleColors [] =
 
 void twinkleEffect()
 {
-    static int passCount = 0;
+    int passCount = 0;
     if (passCount++ == NUM_LEDS/4)
     {
         passCount = 0;
@@ -46,4 +46,10 @@ void confettiEffect(){
 
   DrawAllPixels(g_led_buffer);
 
+}
+
+void snowEffect(byte red, byte green, byte blue, int density = 120)
+{
+  fill_solid(FastLED.leds(), NUM_LEDS, CRGB(red, green, blue));
+  addGlitter(density);
 }

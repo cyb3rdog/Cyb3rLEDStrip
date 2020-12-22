@@ -15,17 +15,15 @@ static CRGBPalette16  g_targetPalette = g_currentPalette;
 
 #include "utils.h"
 #include "macros.h"
-#include "effects.h"
-#include "effects-fire.h"
+#include "effects-bounce.h"
 #include "effects-comet.h"
-#include "effects-matrix.h"
 #include "effects-demos.h"
+#include "effects-fire.h"
+#include "effects-marquee.h"
+#include "effects-matrix.h"
 #include "effects-ripple.h"
 #include "effects-rainbow.h"
 #include "effects-twinkle.h"
-#include "effects-marquee.h"
-
-#include "bounce.h"
 
 
 //--------------------[ Rainbows ]------------------------------------------------------------------------------
@@ -101,7 +99,7 @@ void DrawRainbowChase(){
 void DrawFireFromCenter(){                        // Fire From Center
 
   FastLED.clear(false);
-  Fire(128,120, NUM_LEDS / 2, 1);
+  Fire(128,120, NUM_LEDS / 2,  1);
   Fire(128,120, NUM_LEDS / 2, -1);
 
 } // DrawFire()
@@ -178,9 +176,15 @@ void DrawMatrixRay(){
 } // DrawMatrixRay()
 
 
-void DrawTest(){
+BouncingBall balls[4];
 
+void DrawBouncingBalls(){
 
+  balls[0].HueColor = g_hue + 64 % 256;
+  balls[1].HueColor = g_hue + 128 % 256;
+  balls[2].HueColor = g_hue + 192 % 256;
+  balls[2].HueColor = g_hue + 256 % 256;
+  BouncingColoredBalls(balls, 4);
 
 }
 
@@ -211,6 +215,11 @@ void DrawTwinkle() {
 
 } // DrawTwinkle()
 
+void DrawSnowSparke() {
+
+  snowEffect(BRIGHTNESS, BRIGHTNESS, BRIGHTNESS);
+
+} // DrawSnowSparke()
 
 //--------------------[ BLACK OFF ]--------------------------------------------------------------------------
 
@@ -264,6 +273,8 @@ SimplePatternList EffectsList = {
   //blendwaveEffect,
   blurEffect,
 
+  //DrawBouncingBalls,
+  DrawSnowSparke,
   //ease,
 
   /* ---- OFF ---- */
@@ -307,10 +318,10 @@ private:
       SetBrightness(CurrentBrightness + 32 % 256);
       blink(CRGB::White, 100);
     }
-    if (Button.clicks == -2){
-      SetBrightness(BRIGHTNESS);
-      { blink(CRGB::White, 100); blink(CRGB::White, 100); blink(CRGB::White, 100); }
-    }
+    //if (Button.clicks == -2){
+    //  SetBrightness(BRIGHTNESS);
+    //  { blink(CRGB::White, 100); blink(CRGB::White, 100); blink(CRGB::White, 100); delay(50); }
+    //}
 
   }
 
@@ -351,17 +362,19 @@ public:
       AutoChangeEnabled = autoChangeEnabled;
       EEPROM.write(EEPROM_Address + 0x08, AutoChangeEnabled ? 1 : 0);
 
-      if (AutoChangeEnabled) { blink(CRGB::Green, 150); blink(CRGB::Green, 150); blink(CRGB::Green, 150); }
-      else { blink(CRGB::Red, 150); blink(CRGB::Red, 150); blink(CRGB::Red, 150); }
+      if (AutoChangeEnabled) { blink(CRGB::Green, 150); blink(CRGB::Green, 150); blink(CRGB::Green, 200); delay(50); }
+      else { blink(CRGB::Red, 150); blink(CRGB::Red, 150); blink(CRGB::Red, 150); delay(50); }
 
   } // SetAutoChange()
 
   void SetBrightness(uint8_t brightness){
 
       CurrentBrightness = brightness;
+      FastLED.setBrightness(CurrentBrightness);
       EEPROM.write(EEPROM_Address + 0x04, CurrentBrightness);
 
   } // SetBrightness()
+
 
   void MainLoop(){
 
@@ -371,11 +384,14 @@ public:
       ChangeEffectByTime(AutoChangeInterval);
 
     EVERY_N_MILLISECONDS(EFFECT_SPEED) {
-      EffectsList[CurrentEffectNumber]();         // Call the current pattern function once, updating the 'leds' array
+      // Call the current pattern function once, updating the 'leds' array
+      EffectsList[CurrentEffectNumber]();
+      // Fade all effects with CurrentBrightness ratio
       fadeToBlackBy(FastLED.leds(), NUM_LEDS, 255 - CurrentBrightness);
     }
 
-    EVERY_N_MILLISECONDS(COLOR_SPEED) {               // slowly cycle the "base color" through the rainbow
+    EVERY_N_MILLISECONDS(COLOR_SPEED) {
+      // slowly cycle the "base color" through the rainbow
       g_hue++;
     }
 
